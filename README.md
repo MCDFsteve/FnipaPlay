@@ -1,16 +1,16 @@
-# fnipaplay
+# 绝赞开发中
+<img width="512" alt="image" src="https://github.com/MCDFsteve/FnipaPlay/assets/71605531/45ffc07a-fc3a-4430-acf5-f542b4739c0a">
+<img width="256" alt="image" src="https://github.com/MCDFsteve/FnipaPlay/assets/71605531/39d7af56-f76b-4b5e-b14d-c3021e50262c">
 
-A new Flutter project.
+<img src="https://counter.seku.su/cmoe?name=fnipaplay&theme=glebooru" />
 
-## Getting Started
+[![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange)](https://github.com/MCDFsteve/FnipaPlay)
 
-This project is a starting point for a Flutter application.
+### 这里是本地弹幕播放器项目 [<code>NipaPlay</code>](https://www.github.com/MCDFsteve/NipaPlay/) 的完全重制项目
+#### 从<code>Electron</code>迁移为<code>Flutter</code>的尝试。
+#### 如果迁移成功。播放器将会拥有更多的视频适配，更小的性能开销，更优雅的UI交互，以及更多的操作系统，将不止于macOS，Linux，Windows，而是扩展到IOS，Android。
 
-A few resources to get you started if this is your first Flutter project:
+### 在此项目完工之前 你依旧可以继续使用NipaPlay
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<img width="1440" alt="image" src="https://github.com/MCDFsteve/FnipaPlay/assets/71605531/6e268a2f-1f93-4070-869f-1b90dbdc10ee">
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
