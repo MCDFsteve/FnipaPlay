@@ -29,12 +29,20 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   bitsdojo_window: ^0.1.6
+  canvas_danmaku: ^0.1.6
+  crypto: ^3.0.3
   cupertino_icons: ^1.0.8
   desktop_lifecycle: ^0.1.1
   desktop_multi_window: ^0.2.0
+  dio: ^5.5.0+1
   flutter:
     sdk: flutter
   flutter_seekbar: ^1.0.1
+  http: ^1.2.1
+  ns_danmaku: 
+    git: 
+        url: https://github.com/xiaoyaocz/flutter_ns_danmaku.git
+        ref: master
   window_manager: ^0.3.9
   
 

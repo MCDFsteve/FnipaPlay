@@ -2,6 +2,8 @@
 
 library videos;
 
+import 'package:http/http.dart' as http;
+import 'package:crypto/crypto.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
@@ -15,7 +17,8 @@ import 'package:video_player/video_player.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:fnipaplay/audio_video_progress_bar.dart';
-
+import 'dart:convert';
+import 'package:canvas_danmaku/canvas_danmaku.dart';
 bool isFullScreen = false;
 double _iconOpacity = 0.5;
 double _iconOpacity2 = 0.5;
@@ -23,8 +26,22 @@ double _iconOpacity3 = 0.5;
 double _iconOpacity4 = 0.5;
 double _iconOpacity5 = 0.5;
 double _iconOpacity6 = 1.0;
+double _iconOpacity7 = 0.5;
 bool conop = false;
 
+class AnimeMatch {
+  int? episodeId;
+  int? animeId;
+  String? animeTitle;
+  String? episodeTitle;
+
+  AnimeMatch(
+      {this.episodeId, this.animeId, this.animeTitle, this.episodeTitle});
+}
+// 全局变量
+AnimeMatch anime = AnimeMatch();
+List<Map<String, dynamic>> danmakuList = [];
+Set<String> displayedDanmaku = {};
 class MyVideoPlayer extends StatefulWidget {
   const MyVideoPlayer({super.key});
 
@@ -88,10 +105,10 @@ class MyRectanglePainter extends CustomPainter {
 }
 
 class _MyVideoPlayerState extends State<MyVideoPlayer> {
+  late DanmakuController _controllerdanmaku;
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
   bool _isPlaying = false;
-  final bool _isControlVisible = true;
   double _volume = 0.5;
   OverlayEntry? _volumeOverlay;
   final FocusNode _focusNode = FocusNode();
@@ -100,7 +117,6 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
   // ignore: unused_field
   Timer? _timer;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
-
   get none => null;
 
   @override
@@ -176,6 +192,11 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
     }
   }
 
+  void _handleMouseHover7(bool isHovering) {
+    setState(() {
+      _iconOpacity7 = isHovering ? 1.0 : 0.5;
+    });
+  }
   // ignore: deprecated_member_use
   void _handleRawKeyEvent(RawKeyEvent event) {
     // ignore: deprecated_member_use
@@ -219,9 +240,11 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
       if (_controller!.value.isPlaying) {
         _controller!.pause();
         _isPlaying = false;
+        _controllerdanmaku.pause();
       } else {
         _controller!.play();
         _isPlaying = true;
+        _controllerdanmaku.resume();
       }
     });
   }
@@ -230,6 +253,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
     if (_controller != null) {
       _controller!
           .seekTo(_controller!.value.position + const Duration(seconds: 5));
+          _onSeekComplete();
     }
   }
 
@@ -237,6 +261,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
     if (_controller != null) {
       _controller!
           .seekTo(_controller!.value.position - const Duration(seconds: 5));
+          _onSeekComplete();
     }
   }
 
@@ -330,6 +355,120 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                   ),
                                 ),
                               ),
+                              MouseRegion(onEnter: (_) {
+                                setState(() {
+                                });
+                              }, onExit: (_) {
+                                setState(() {
+                                });
+                              }),
+                              //显示集数名字
+                              Stack(
+                                children: [
+                                  Container(),
+                                  // 弹幕组件
+                                  DanmakuScreen(
+                                    createdController: (DanmakuController e) {
+                                      _controllerdanmaku = e;
+                                    },
+                                    option: DanmakuOption(
+                                      fontSize:30,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 45,
+                                    left: 0,
+                                    child: MouseRegion(
+                                        onEnter: (_) {
+                                          setState(() {
+                                            conop = true;
+                                          });
+                                        },
+                                        onExit: (_) {
+                                          setState(() {
+                                            conop = false;
+                                          });
+                                        },
+                                        child: AnimatedOpacity(
+                                            duration: const Duration(
+                                                milliseconds: 150),
+                                            opacity: _iconOpacity6,
+                                            child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5,
+                                                        horizontal: 6),
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                          255, 255, 255, 255)
+                                                      .withOpacity(0),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                                  52, 0, 0, 0)
+                                                              .withOpacity(0.1),
+                                                      offset:
+                                                          const Offset(2, 2),
+                                                      blurRadius: 10,
+                                                    ),
+                                                    BoxShadow(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                                  33, 0, 0, 0)
+                                                              .withOpacity(0.1),
+                                                      offset:
+                                                          const Offset(-2, 2),
+                                                      blurRadius: 10,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 5,
+                                                                horizontal: 10),
+                                                        child: BackdropFilter(
+                                                            filter: ImageFilter
+                                                                .blur(
+                                                                    sigmaX: 30,
+                                                                    sigmaY: 30),
+                                                            child: MouseRegion(
+                                                                onEnter: (_) {
+                                                                  _handleMouseHover7(
+                                                                      true); // 鼠标进入时，设置为完全不透明
+                                                                },
+                                                                onExit: (_) {
+                                                                  _handleMouseHover7(
+                                                                      false); // 鼠标离开时，恢复为默认透明度
+                                                                },
+                                                                child:
+                                                                    AnimatedOpacity(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          200),
+                                                                  opacity:
+                                                                      _iconOpacity7,
+                                                                  child: Text(
+                                                                    '${anime.animeTitle ?? ''} ${anime.episodeTitle ?? ''}',
+                                                                    style: const TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            15),
+                                                                  ),
+                                                                )))))))),
+                                  ),
+                                ],
+                              ),
+                              //播放器控制栏
                               Positioned(
                                 bottom: 0,
                                 left: 0,
@@ -347,7 +486,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                     },
                                     child: AnimatedOpacity(
                                       duration:
-                                          const Duration(milliseconds: 300),
+                                          const Duration(milliseconds: 150),
                                       opacity: _iconOpacity6,
                                       child: Padding(
                                         padding: const EdgeInsets.all(10),
@@ -605,6 +744,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                                                     _controller!
                                                                         .seekTo(
                                                                             duration);
+                                                                            _onSeekComplete();
                                                                     // videopos(
                                                                     //_controller!.value.position.inMilliseconds + _controller!.value.duration.inMilliseconds * videopos);
                                                                   },
@@ -766,6 +906,181 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
     return '${duration.inHours > 0 ? '${twoDigits(duration.inHours)}:' : ''}$minutes:$seconds';
   }
 
+  Future<void> _handleFileProcessingAndPostRequest(File file) async {
+    // 读取文件的前16MB
+    final fileBytes = await file
+        .openRead(0, 16 * 1024 * 1024)
+        .fold<List<int>>([], (previous, element) => previous..addAll(element));
+
+    // 计算MD5哈希值
+    final fileHash = md5.convert(fileBytes).toString();
+
+    // 获取文件大小
+    final fileSize = await file.length();
+
+    // 获取视频时长
+    final tempController = VideoPlayerController.file(file);
+    await tempController.initialize();
+    final videoDuration = tempController.value.duration.inSeconds;
+
+    // 发送POST请求
+    final response = await http.post(
+      Uri.parse('https://api.dandanplay.net/api/v2/match'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        'fileName': file.path.split('/').last,
+        'fileHash': fileHash,
+        'fileSize': fileSize,
+        'videoDuration': videoDuration,
+        'matchMode': 'hashAndFileName',
+      }),
+    );
+
+    if (kDebugMode) {
+      print('Response: ${response.body}');
+    }
+
+    // 解析返回结果
+    final jsonResponse = jsonDecode(response.body);
+    if (jsonResponse['isMatched'] == true) {
+      final match = jsonResponse['matches'][0];
+      anime = AnimeMatch(
+        episodeId: match['episodeId'],
+        animeId: match['animeId'],
+        animeTitle: match['animeTitle'],
+        episodeTitle: match['episodeTitle'],
+      );
+
+      if (kDebugMode) {
+        print('Episode ID: ${anime.episodeId}');
+        print('Anime ID: ${anime.animeId}');
+        print('Anime Title: ${anime.animeTitle}');
+        print('Episode Title: ${anime.episodeTitle}');
+      }
+      // 调用新的函数来发送GET请求并打印返回的JSON
+      await _fetchComments(anime.episodeId!);
+    }
+  }
+Future<void> _fetchComments(int episodeId) async {
+    final response = await http.get(
+      Uri.parse('https://api.dandanplay.net/api/v2/comment/$episodeId?withRelated=true&chConvert=1'),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonResponse = jsonDecode(response.body)['comments'];
+
+      danmakuList = jsonResponse.map((comment) {
+        final List<String> pValues = comment['p'].split(',');
+
+        String space;
+        switch (pValues[1]) {
+          case '1':
+            space = 'scroll';
+            break;
+          case '5':
+            space = 'top';
+            break;
+          case '4':
+            space = 'bottom';
+            break;
+          default:
+            space = 'scroll';
+        }
+
+        final int colorValue = int.parse(pValues[2]);
+        final int red = (colorValue >> 16) & 0xFF;
+        final int green = (colorValue >> 8) & 0xFF;
+        final int blue = colorValue & 0xFF;
+
+        return {
+          'time': (double.parse(pValues[0]) * 1000).toInt(),
+          'space': space,
+          'color': 'rgb($red,$green,$blue)',
+          'content': comment['m'],
+        };
+      }).toList();
+
+      if (kDebugMode) {
+        //print('Formatted Comments: ${jsonEncode(danmakuList)}');
+      }
+    } else {
+      if (kDebugMode) {
+        print('Failed to load comments');
+      }
+    }
+  }
+   void _startDanmakuTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+      if (!_isPlaying) {
+        timer.cancel();
+        return;
+      }
+      _checkDanmaku();
+    });
+  }
+
+  void _checkDanmaku() {
+    final currentPosition = _controller!.value.position.inMilliseconds;
+    final int timeWindow = 500; // 允许的时间误差
+    final List<Map<String, dynamic>> currentDanmaku = danmakuList
+        .where((danmaku) =>
+            (currentPosition - danmaku['time']).abs() <= timeWindow)
+        .toList();
+    for (var danmaku in currentDanmaku) {
+      final colorValues = danmaku['color']
+          .replaceAll('rgb(', '')
+          .replaceAll(')', '')
+          .split(',')
+          .map((s) => int.parse(s))
+          .toList();
+      final color = Color.fromARGB(255, colorValues[0], colorValues[1], colorValues[2]);
+      final type = danmaku['space'] == 'scroll'
+          ? DanmakuItemType.scroll
+          : danmaku['space'] == 'top'
+              ? DanmakuItemType.top
+              : DanmakuItemType.bottom;
+
+      final danmakuKey = '${danmaku['time']}-${danmaku['space']}-${danmaku['color']}-${danmaku['content']}';
+      if (!displayedDanmaku.contains(danmakuKey)) {
+        displayedDanmaku.add(danmakuKey);
+        _controllerdanmaku.addDanmaku(
+          DanmakuContentItem(danmaku['content'], color: color,type: type)
+        );
+      }
+    }
+  }
+
+  void _onVideoPositionChanged() {
+    if (_controller!.value.isPlaying) {
+      if (!_isPlaying) {
+        setState(() {
+          _isPlaying = true;
+        });
+        _startDanmakuTimer();
+      }
+    } else {
+      if (_isPlaying) {
+        setState(() {
+          _isPlaying = false;
+        });
+        _timer?.cancel();
+      }
+    }
+  }
+
+  void _onSeekComplete() {
+    _controllerdanmaku.clear();
+    _controllerdanmaku.updateOption(DanmakuOption(fontSize:30));
+    displayedDanmaku.clear();
+    _checkDanmaku();
+  }
   void _pickVideo() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.video,
@@ -773,12 +1088,25 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
 
     if (result != null) {
       File file = File(result.files.single.path!);
+
+      // 处理文件并发送POST请求
+      await _handleFileProcessingAndPostRequest(file);
+
+      // 停止并释放当前的控制器（如果存在）
+      if (_controller != null) {
+        _controller = null;
+      }
+
+      // 创建新的控制器并播放视频
       _controller = VideoPlayerController.file(file);
-      _controller!.play();
-      _isPlaying = true;
-      _handleMouseHover6();
       _initializeVideoPlayerFuture = _controller!.initialize();
-      setState(() {});
+
+      setState(() {
+        _controller!.play();
+        _isPlaying = true;
+        _startDanmakuTimer();
+      });
+      _controller!.addListener(_onVideoPositionChanged);
     }
   }
 }
