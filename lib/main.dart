@@ -22,24 +22,6 @@ void main() async {
     await windowManager.focus();
     await windowManager.maximize();
   });
-  registerWith(
-    options: {
-      'video.decoders': [
-        'FFmpeg:codec=h264_mediacodec:hwaccel=mediacodec:hwcontext=mediacodec',
-        'D3D11',
-        'DXVA',
-        'NVDEC',
-        'CUDA',
-        'VAAPI',
-        'MFT',
-        'VT',
-        'VADRM',
-        'VDPAU',
-      ],
-      'global': {
-        'profiler.gpu': 1,
-      }
-    },
-  );
+  registerWith(options: {'platforms': ['windows', 'macos', 'linux']});
   runApp(const FnipaPlay());
 }
