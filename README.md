@@ -12,6 +12,7 @@
 
 ### 在此项目完工之前 你依旧可以继续使用NipaPlay
 
-<img width="1440" alt="image" src="https://github.com/MCDFsteve/FnipaPlay/assets/71605531/8458667f-c003-40b8-8797-cd08d0f0d7f1">
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/7dbf9d45-f491-416b-adf0-9b4e63d91290">
+
 
 
