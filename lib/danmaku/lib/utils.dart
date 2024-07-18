@@ -23,7 +23,7 @@ class Utils {
     final Paint strokePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
-      ..color = (content.color == Colors.black || content.color.value == Color.fromARGB(255, 0, 0, 0).value)
+      ..color = (content.color == Colors.black || content.color.value == const Color.fromARGB(255, 0, 0, 0).value)
           ? Colors.white
           : Colors.black;
 
