@@ -145,7 +145,7 @@ jobs:
         run: |
           # Prepare build depends
           sudo apt-get update -y
-          sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libasound2-dev
+          sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libasound2-dev libass-dev
           
           # Compile
           flutter config --enable-linux-desktop
@@ -173,7 +173,8 @@ jobs:
           Installed-Size: 34648
           Description: A cross platform danmaku video player.
           Homepage: https://github.com/MCDFsteve/FnipaPlay
-          Depends: ffmpeg
+          Depends: ffmpeg,
+                   libass9
           EOF
 
           cp ../../../assets/linux/io.github.MCDFsteve.FnipaPlay.desktop usr/share/applications
