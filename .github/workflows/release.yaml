@@ -102,7 +102,7 @@ jobs:
       - name: Build Android
         if: matrix.target == 'Android'
         run: |
-          flutter build apk -t lib/src/main.dart --release --split-per-abi
+          flutter build apk --release --split-per-abi
           cd build/app/outputs/apk/release
           mv app-arm64-v8a-release.apk FnipaPlay-${{ steps.get_version.outputs.version }}-arm64-v8a.apk
           mv app-armeabi-v7a-release.apk FnipaPlay-${{ steps.get_version.outputs.version }}-armeabi-v7a.apk
@@ -114,7 +114,7 @@ jobs:
           cd ios
           pod update
           cd ..
-          flutter build ios -t lib/src/main.dart --release --no-codesign
+          flutter build ios --release --no-codesign
           sh thin-payload.sh build/ios/iphoneos/*.app
           cd build
           mkdir -p Payload
@@ -132,7 +132,7 @@ jobs:
       - name: Build Windows
         if: matrix.target == 'Windows'
         run: |
-          flutter build windows -t lib/src/main.dart --release
+          flutter build windows --release
           $DestDir = "build\windows\FnipaPlay_${{ steps.get_version.outputs.version }}"
           $SrcDir = "build\windows\x64\runner\Release"
           New-Item -Path $DestDir -ItemType Directory
@@ -178,7 +178,7 @@ jobs:
 
           cp ../../../assets/linux/io.github.MCDFsteve.FnipaPlay.desktop usr/share/applications
           cp ../../../assets/images/logo512.png usr/share/icons/hicolor/512x512/apps/io.github.MCDFsteve.FnipaPlay.png
-          
+
           cd ..
           dpkg-deb --build FnipaPlay-${{ steps.get_version.outputs.version }}-Linux-amd64
 
