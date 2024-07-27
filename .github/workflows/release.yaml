@@ -6,7 +6,7 @@ on:
     branches:
       - '**'
     tags:
-      - '*'
+      - '0.*'
 
 # If previous workflow is still running, we push again, we will cancel the previous workflow
 concurrency:
@@ -97,7 +97,7 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          echo "::set-output name=version::$(head -n 5 pubspec.yaml | tail -n 1 | cut -d ' ' -f 2)"
+          echo "::set-output name=version::$(head -n 19 pubspec.yaml | tail -n 1 | cut -d ' ' -f 2)"
       # Build Android .apk
       - name: Build Android
         if: matrix.target == 'Android'
@@ -139,7 +139,7 @@ jobs:
           Copy-Item $SrcDir\* -Recurse $DestDir
           Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
           Compress-Archive $DestDir build\windows\FnipaPlay_${{ steps.get_version.outputs.version }}_Windows.zip
-      # Build Linux .deb and .AppImage
+      # Build Linux .deb
       - name: Build Linux
         if: matrix.target == 'Linux'
         run: |
