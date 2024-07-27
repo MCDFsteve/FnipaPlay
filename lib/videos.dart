@@ -430,7 +430,6 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                 //显示集数名字
                                 Stack(
                                   children: [
-                                    Container(),
                                     // 弹幕组件
                                     DanmakuScreen(
                                       createdController: (DanmakuController e) {
@@ -1152,19 +1151,47 @@ String _formatDuration(Duration? duration) {
         print('Error loading comments: $e');
       }
     }
+    if (kDebugMode) {
+        print('Formatted Comments: ${jsonEncode(danmakuList)}');
+      }
   }
-
-  void _checkDanmaku(int currentPosition) {
-    const int timeWindow = 0; // 允许的时间误差
-    final List<Map<String, dynamic>> currentDanmaku = danmakuList.where((danmaku) => (currentPosition - danmaku['time']).abs() <= timeWindow).toList();
+void _startDanmakuTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+      if (!_isPlaying) {
+        timer.cancel();
+        return;
+      }
+      _checkDanmaku();
+    });
+  }
+  void _checkDanmaku() {
+    final currentPosition = _controller!.value.position.inMilliseconds;
+    const int timeWindow = 200; // 允许的时间误差
+    final List<Map<String, dynamic>> currentDanmaku = danmakuList
+        .where((danmaku) =>
+            (currentPosition - danmaku['time']).abs() <= timeWindow)
+        .toList();
     for (var danmaku in currentDanmaku) {
-      final colorValues = danmaku['color'].replaceAll('rgb(', '').replaceAll(')', '').split(',').map((s) => int.parse(s)).toList();
+      final colorValues = danmaku['color']
+          .replaceAll('rgb(', '')
+          .replaceAll(')', '')
+          .split(',')
+          .map((s) => int.parse(s))
+          .toList();
       final color = Color.fromARGB(255, colorValues[0], colorValues[1], colorValues[2]);
-      final type = danmaku['space'] == 'scroll' ? DanmakuItemType.scroll : danmaku['space'] == 'top' ? DanmakuItemType.top : DanmakuItemType.bottom;
+      final type = danmaku['space'] == 'scroll'
+          ? DanmakuItemType.scroll
+          : danmaku['space'] == 'top'
+              ? DanmakuItemType.top
+              : DanmakuItemType.bottom;
+
       final danmakuKey = '${danmaku['time']}-${danmaku['space']}-${danmaku['color']}-${danmaku['content']}';
       if (!displayedDanmaku.contains(danmakuKey)) {
         displayedDanmaku.add(danmakuKey);
-        _controllerdanmaku.addDanmaku(DanmakuContentItem(danmaku['content'], color: color, type: type));
+        _controllerdanmaku.addDanmaku(
+          DanmakuContentItem(danmaku['content'], color: color,type: type)
+        );
       }
     }
   }
@@ -1175,26 +1202,23 @@ String _formatDuration(Duration? duration) {
         setState(() {
           _isPlaying = true;
         });
+        _startDanmakuTimer();
       }
-      final currentPosition = _controller!.value.position.inMilliseconds;
-      _checkDanmaku(currentPosition);
     } else {
       if (_isPlaying) {
         setState(() {
           _isPlaying = false;
         });
+        _timer?.cancel();
       }
     }
   }
 
   void _onSeekComplete() {
     _controllerdanmaku.clear();
-    _controllerdanmaku.updateOption(DanmakuOption(fontSize: 30));
+    _controllerdanmaku.updateOption(DanmakuOption(fontSize:30));
     displayedDanmaku.clear();
-    _checkDanmaku(_controller!.value.position.inMilliseconds);
-    if (!_controller!.value.isPlaying) {
-      _controllerdanmaku.resume();
-    }
+    _checkDanmaku();
   }
 
   void _loadVideoPosition() async {
@@ -1230,6 +1254,7 @@ String _formatDuration(Duration? duration) {
         _handleMouseHover6();
         _controller!.play();
         _isPlaying = true;
+        _startDanmakuTimer();
       });
       _controller!.addListener(_onVideoPositionChanged);
     }
