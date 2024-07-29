@@ -181,7 +181,7 @@ jobs:
           cp ../../../assets/images/logo512.png usr/share/icons/hicolor/512x512/apps/io.github.MCDFsteve.FnipaPlay.png
 
           cd ..
-          dpkg-deb --build FnipaPlay-${{ steps.get_version.outputs.version }}-Linux-amd64
+          dpkg-deb --build --root-owner-group FnipaPlay-${{ steps.get_version.outputs.version }}-Linux-amd64
 
       # Upload Artifacts
       - name: Upload Artifacts
