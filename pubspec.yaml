@@ -41,6 +41,9 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   http: ^1.2.1
   ionicons: ^0.2.2
+  media_kit: ^1.1.10+1
+  media_kit_libs_video: ^1.0.4
+  media_kit_video: ^1.2.4
   ns_danmaku: 
     git: 
         url: https://github.com/xiaoyaocz/flutter_ns_danmaku.git

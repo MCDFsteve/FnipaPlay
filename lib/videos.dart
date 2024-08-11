@@ -22,6 +22,7 @@ import 'dart:convert';
 import 'package:fnipaplay/danmaku/lib/canvas_danmaku.dart';
 // ignore: depend_on_referenced_packages
 import 'package:ionicons/ionicons.dart';
+import 'package:fnipaplay/danmaku.dart';
 
 var videofile;
 var zentime;
@@ -35,10 +36,10 @@ double _iconOpacity3 = 0.5;
 double _iconOpacity4 = 0.5;
 double _iconOpacity5 = 0.5;
 double _iconOpacity6 = 1.0;
-double _iconOpacity7 = 0.5;
 double _iconOpacity8 = 0.5;
 bool conop = false;
 bool isWinOrLin = Platform.isWindows || Platform.isLinux;
+
 //bool isWinOrLin = Platform.isMacOS;
 class AnimeMatch {
   int? episodeId;
@@ -204,12 +205,6 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
         });
       });
     }
-  }
-
-  void _handleMouseHover7(bool isHovering) {
-    setState(() {
-      _iconOpacity7 = isHovering ? 1.0 : 0.5;
-    });
   }
 
   void _handleMouseHover8(bool isHovering) {
@@ -428,112 +423,12 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                   setState(() {});
                                 }),
                                 //显示集数名字
-                                Stack(
-                                  children: [
-                                    // 弹幕组件
-                                    DanmakuScreen(
-                                      createdController: (DanmakuController e) {
-                                        _controllerdanmaku = e;
-                                      },
-                                      option: DanmakuOption(
-                                        fontSize: 30,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 45,
-                                      left: 0,
-                                      child: MouseRegion(
-                                          onEnter: (_) {
-                                            setState(() {
-                                              conop = true;
-                                            });
-                                          },
-                                          onExit: (_) {
-                                            setState(() {
-                                              conop = false;
-                                            });
-                                          },
-                                          child: AnimatedOpacity(
-                                              duration: const Duration(
-                                                  milliseconds: 150),
-                                              opacity: _iconOpacity6,
-                                              child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 5,
-                                                      horizontal: 6),
-                                                  decoration: BoxDecoration(
-                                                    color: const Color.fromARGB(
-                                                            255, 255, 255, 255)
-                                                        .withOpacity(0),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: const Color
-                                                                .fromARGB(
-                                                                52, 0, 0, 0)
-                                                            .withOpacity(0.1),
-                                                        offset:
-                                                            const Offset(2, 2),
-                                                        blurRadius: 10,
-                                                      ),
-                                                      BoxShadow(
-                                                        color: const Color
-                                                                .fromARGB(
-                                                                33, 0, 0, 0)
-                                                            .withOpacity(0.1),
-                                                        offset:
-                                                            const Offset(-2, 2),
-                                                        blurRadius: 10,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 5,
-                                                                  horizontal:
-                                                                      10),
-                                                          child: BackdropFilter(
-                                                              filter: ImageFilter
-                                                                  .blur(
-                                                                      sigmaX:
-                                                                          30,
-                                                                      sigmaY:
-                                                                          30),
-                                                              child: MouseRegion(
-                                                                  onEnter: (_) {
-                                                                    _handleMouseHover7(
-                                                                        true); // 鼠标进入时，设置为完全不透明
-                                                                  },
-                                                                  onExit: (_) {
-                                                                    _handleMouseHover7(
-                                                                        false); // 鼠标离开时，恢复为默认透明度
-                                                                  },
-                                                                  child: AnimatedOpacity(
-                                                                    duration: const Duration(
-                                                                        milliseconds:
-                                                                            200),
-                                                                    opacity:
-                                                                        _iconOpacity7,
-                                                                    child: Text(
-                                                                      '${anime.animeTitle ?? ''} ${anime.episodeTitle ?? ''}',
-                                                                      style: const TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              15),
-                                                                    ),
-                                                                  )))))))),
-                                    ),
-                                  ],
+                                DanmakuControl(
+                                  controller: _controller!,
+                                  IconOpacity6: _iconOpacity6,
+                                  onControllerCreated: (controller) {
+                                    _controllerdanmaku = controller;
+                                  },
                                 ),
                                 //播放器控制栏
                                 Positioned(
@@ -881,16 +776,18 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                                                           IconButton(
                                                                         onPressed:
                                                                             () async {
-                                                                          if (isFullScreen){
-                                                                            isFullScreen = false;
-                                                                            windowManager
-                                                                              .setFullScreen(false);
-                                                                            masteropac = 1;
-                                                                          }else{
-                                                                            isFullScreen = true;
-                                                                            windowManager
-                                                                              .setFullScreen(true);
-                                                                            masteropac = 0;
+                                                                          if (isFullScreen) {
+                                                                            isFullScreen =
+                                                                                false;
+                                                                            windowManager.setFullScreen(false);
+                                                                            masteropac =
+                                                                                1;
+                                                                          } else {
+                                                                            isFullScreen =
+                                                                                true;
+                                                                            windowManager.setFullScreen(true);
+                                                                            masteropac =
+                                                                                0;
                                                                           }
                                                                         }, // 全屏/窗口化功能
                                                                         icon:
@@ -930,94 +827,94 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
           ),
         ),
         if (!isFullScreen)
-        Positioned(
-          top: 0,
-          right: 0,
-          child: isWinOrLin
-              ? MouseRegion(
-                  onEnter: (_) {
-                    setState(() {
-                      conop = true;
-                    });
-                  },
-                  onExit: (_) {
-                    setState(() {
-                      conop = false;
-                    });
-                  },
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 150),
-                    opacity: _iconOpacity6 * masteropac,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 1.5, horizontal: 3),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(52, 0, 0, 0)
-                                .withOpacity(0.1),
-                            offset: const Offset(2, 2),
-                            blurRadius: 10,
-                          ),
-                          BoxShadow(
-                            color: const Color.fromARGB(33, 0, 0, 0)
-                                .withOpacity(0.1),
-                            offset: const Offset(-2, 2),
-                            blurRadius: 10,
-                          ),
-                        ],
-                      ),
-                      child: Row(children: [
-                        // Minimize Button
-                        IconButton(
-                          icon: const Icon(CupertinoIcons.minus,
-                              color: Colors.white, size: 20),
-                          onPressed: () {
-                            windowManager.minimize();
-                          },
+          Positioned(
+            top: 0,
+            right: 0,
+            child: isWinOrLin
+                ? MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        conop = true;
+                      });
+                    },
+                    onExit: (_) {
+                      setState(() {
+                        conop = false;
+                      });
+                    },
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: _iconOpacity6 * masteropac,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 1.5, horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 255, 255, 255)
+                              .withOpacity(0),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color.fromARGB(52, 0, 0, 0)
+                                  .withOpacity(0.1),
+                              offset: const Offset(2, 2),
+                              blurRadius: 10,
+                            ),
+                            BoxShadow(
+                              color: const Color.fromARGB(33, 0, 0, 0)
+                                  .withOpacity(0.1),
+                              offset: const Offset(-2, 2),
+                              blurRadius: 10,
+                            ),
+                          ],
                         ),
-                        // Fullscreen Button
-                        IconButton(
-                          onPressed: () async {
-                            isMaximized = await windowManager.isMaximized();
-                            if (isMaximized) {
+                        child: Row(children: [
+                          // Minimize Button
+                          IconButton(
+                            icon: const Icon(CupertinoIcons.minus,
+                                color: Colors.white, size: 20),
+                            onPressed: () {
+                              windowManager.minimize();
+                            },
+                          ),
+                          // Fullscreen Button
+                          IconButton(
+                            onPressed: () async {
+                              isMaximized = await windowManager.isMaximized();
+                              if (isMaximized) {
                                 await windowManager.unmaximize();
-                            }else {
-                              await windowManager.maximize();
-                            }
-                            setState(() {
-                              isMaximized = !isMaximized;
-                            });
-                          },
-                          icon: Transform(
-                            alignment: Alignment.center,
-                            transform: Matrix4.rotationY(3.14159),
-                            child: Icon(
-                              isMaximized
-                                  ? Ionicons.copy_outline
-                                  : Ionicons.square_outline,
-                              color: Colors.white,
-                              size: 20,
+                              } else {
+                                await windowManager.maximize();
+                              }
+                              setState(() {
+                                isMaximized = !isMaximized;
+                              });
+                            },
+                            icon: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(3.14159),
+                              child: Icon(
+                                isMaximized
+                                    ? Ionicons.copy_outline
+                                    : Ionicons.square_outline,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
                           ),
-                        ),
-                        // Close Button
-                        IconButton(
-                          icon: const Icon(CupertinoIcons.clear,
-                              color: Colors.white, size: 20),
-                          onPressed: () {
-                            windowManager.close();
-                          },
-                        )
-                      ]),
+                          // Close Button
+                          IconButton(
+                            icon: const Icon(CupertinoIcons.clear,
+                                color: Colors.white, size: 20),
+                            onPressed: () {
+                              windowManager.close();
+                            },
+                          )
+                        ]),
+                      ),
                     ),
-                  ),
-                )
-              : const MouseRegion(),
-        ),
+                  )
+                : const MouseRegion(),
+          ),
       ]),
       floatingActionButton: _controller == null
           ? FloatingActionButton(
@@ -1063,7 +960,8 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
       },
     );
   }
-String _formatDuration(Duration? duration) {
+
+  String _formatDuration(Duration? duration) {
     if (duration == null) return '0:00';
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -1073,7 +971,10 @@ String _formatDuration(Duration? duration) {
 
   Future<void> _handleFileProcessingAndPostRequest(File file) async {
     try {
-      final fileBytes = await file.openRead(0, 16 * 1024 * 1024).fold<List<int>>([], (previous, element) => previous..addAll(element));
+      final fileBytes = await file
+          .openRead(0, 16 * 1024 * 1024)
+          .fold<List<int>>(
+              [], (previous, element) => previous..addAll(element));
       final fileHash = md5.convert(fileBytes).toString();
       final fileSize = await file.length();
 
@@ -1083,7 +984,10 @@ String _formatDuration(Duration? duration) {
 
       final response = await Dio().post(
         'https://api.dandanplay.net/api/v2/match',
-        options: Options(headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }),
         data: jsonEncode({
           'fileName': file.path.split('/').last,
           'fileHash': fileHash,
@@ -1115,7 +1019,9 @@ String _formatDuration(Duration? duration) {
 
   Future<void> _fetchComments(int episodeId) async {
     try {
-      final response = await Dio().get('https://api.dandanplay.net/api/v2/comment/$episodeId?withRelated=true&chConvert=1', options: Options(headers: {'Accept': 'application/json'}));
+      final response = await Dio().get(
+          'https://api.dandanplay.net/api/v2/comment/$episodeId?withRelated=true&chConvert=1',
+          options: Options(headers: {'Accept': 'application/json'}));
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = response.data['comments'];
         danmakuList = jsonResponse.map((comment) {
@@ -1152,10 +1058,11 @@ String _formatDuration(Duration? duration) {
       }
     }
     if (kDebugMode) {
-        print('Formatted Comments: ${jsonEncode(danmakuList)}');
-      }
+      print('Formatted Comments: ${jsonEncode(danmakuList)}');
+    }
   }
-void _startDanmakuTimer() {
+
+  void _startDanmakuTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
       if (!_isPlaying) {
@@ -1165,6 +1072,7 @@ void _startDanmakuTimer() {
       _checkDanmaku();
     });
   }
+
   void _checkDanmaku() {
     final currentPosition = _controller!.value.position.inMilliseconds;
     const int timeWindow = 200; // 允许的时间误差
@@ -1179,19 +1087,20 @@ void _startDanmakuTimer() {
           .split(',')
           .map((s) => int.parse(s))
           .toList();
-      final color = Color.fromARGB(255, colorValues[0], colorValues[1], colorValues[2]);
+      final color =
+          Color.fromARGB(255, colorValues[0], colorValues[1], colorValues[2]);
       final type = danmaku['space'] == 'scroll'
           ? DanmakuItemType.scroll
           : danmaku['space'] == 'top'
               ? DanmakuItemType.top
               : DanmakuItemType.bottom;
 
-      final danmakuKey = '${danmaku['time']}-${danmaku['space']}-${danmaku['color']}-${danmaku['content']}';
+      final danmakuKey =
+          '${danmaku['time']}-${danmaku['space']}-${danmaku['color']}-${danmaku['content']}';
       if (!displayedDanmaku.contains(danmakuKey)) {
         displayedDanmaku.add(danmakuKey);
         _controllerdanmaku.addDanmaku(
-          DanmakuContentItem(danmaku['content'], color: color,type: type)
-        );
+            DanmakuContentItem(danmaku['content'], color: color, type: type));
       }
     }
   }
@@ -1216,7 +1125,7 @@ void _startDanmakuTimer() {
 
   void _onSeekComplete() {
     _controllerdanmaku.clear();
-    _controllerdanmaku.updateOption(DanmakuOption(fontSize:30));
+    _controllerdanmaku.updateOption(DanmakuOption(fontSize: 30));
     displayedDanmaku.clear();
     _checkDanmaku();
   }
@@ -1233,11 +1142,13 @@ void _startDanmakuTimer() {
   }
 
   void _pickVideo() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.video);
     if (result != null) {
       File file = File(result.files.single.path!);
       final fileName = file.path.split('/').last;
-      if (Directory(file.path).existsSync() && (file.path.endsWith('.mp4') || file.path.endsWith('.mkv'))) {
+      if (Directory(file.path).existsSync() &&
+          (file.path.endsWith('.mp4') || file.path.endsWith('.mkv'))) {
         file = File('${file.path}/$fileName');
       }
       await _handleFileProcessingAndPostRequest(file);

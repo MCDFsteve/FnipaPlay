@@ -22,6 +22,6 @@ void main() async {
     await windowManager.focus();
     await windowManager.maximize();
   });
-  registerWith(options: {'platforms': ['windows', 'macos', 'linux']});
+  registerWith();
   runApp(const FnipaPlay());
 }
