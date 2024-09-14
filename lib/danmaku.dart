@@ -2,16 +2,17 @@ import 'dart:ui';
 
 import 'package:fnipaplay/danmaku/lib/canvas_danmaku.dart';
 // ignore: depend_on_referenced_packages
-import 'package:video_player/video_player.dart';
 import 'package:fnipaplay/videos.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:fvp/mdk.dart';
 double _iconOpacity7 = 0.5;
 void _handleMouseHover7(bool isHovering) {
   _iconOpacity7 = isHovering ? 1.0 : 0.5;
 }
 
 class DanmakuControl extends StatelessWidget {
-  final VideoPlayerController controller;
+  final Player controller;
   // ignore: non_constant_identifier_names
   // ignore: prefer_typing_uninitialized_variables, non_constant_identifier_names
   final double IconOpacity6;

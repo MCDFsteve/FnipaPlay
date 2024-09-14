@@ -228,33 +228,52 @@ class _DanmakuScreenState extends State<DanmakuScreen>
 
   /// 暂停
   void pause() {
-    setState(() {
-      _running = false;
-    });
-    if (_animationController.isAnimating) {
-      _animationController.stop();
+    if (_running) {
+      setState(() {
+        _running = false;
+      });
+      if (_animationController.isAnimating) {
+        _animationController.stop();
+      }
     }
   }
 
   /// 恢复
   void resume() {
-    setState(() {
-      _running = true;
-    });
-    if (!_animationController.isAnimating) {
-      _animationController.repeat();
-      // 重启计时器
-      _startTick();
+    if (!_running) {
+      setState(() {
+        _running = true;
+      });
+      if (!_animationController.isAnimating) {
+        _animationController.repeat();
+        // 重启计时器
+        _startTick();
+      }
     }
   }
 
   /// 更新弹幕设置
   void updateOption(DanmakuOption option) {
+    bool needRestart = false;
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+      needRestart = true;
+    }
+
+    /// 需要隐藏弹幕时清理已有弹幕
+    if (option.hideScroll && !_option.hideScroll) {
+      _scrollDanmakuItems.clear();
+    }
+    if (option.hideTop && !_option.hideTop) {
+      _topDanmakuItems.clear();
+    }
+    if (option.hideBottom && !_option.hideBottom) {
+      _bottomDanmakuItems.clear();
+    }
     _option = option;
     _controller.option = _option;
 
     /// 清理已经存在的 Paragraph 缓存
-    _animationController.stop();
     for (DanmakuItem item in _scrollDanmakuItems) {
       if (item.paragraph != null) {
         item.paragraph = null;
@@ -279,7 +298,9 @@ class _DanmakuScreenState extends State<DanmakuScreen>
         item.strokeParagraph = null;
       }
     }
-    _animationController.repeat();
+    if (needRestart) {
+      _animationController.repeat();
+    }
     setState(() {});
   }
 
@@ -365,7 +386,8 @@ class _DanmakuScreenState extends State<DanmakuScreen>
       }
 
       /// 为字幕留出余量
-      _trackCount = (constraints.maxHeight / _danmakuHeight).floor() - 1;
+      _trackCount =
+          (constraints.maxHeight * _option.area / _danmakuHeight).floor() - 1;
 
       _trackYPositions.clear();
       for (int i = 0; i < _trackCount; i++) {
