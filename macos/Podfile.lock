@@ -1,6 +1,6 @@
 PODS:
   - FlutterMacOS (1.0.0)
-  - fvp (0.24.1):
+  - fvp (0.26.1):
     - Flutter
     - FlutterMacOS
     - mdk (~> 0.29.1)
@@ -44,7 +44,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  fvp: 81fd93b02f03649892a996cab2dc38d6804fa8de
+  fvp: 2ed530d49ba212cbe34965c2aa67f51a0e697826
   mdk: 3c49affb38303cf86fd9f8ea1e05fe029c4dc194
   screen_retriever: 59634572a57080243dd1bf715e55b6c54f241a38
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78

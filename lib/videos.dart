@@ -159,6 +159,14 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
   @override
   void initState() {
     super.initState();
+    // 检查是否是 iOS 或 Android
+    if (Platform.isAndroid || Platform.isIOS) {
+      // 如果是 iOS 或 Android，设置为横屏模式
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+    }
     // 确保焦点在初始化时设置
     _startPositionUpdateTimer(); // 启动定时器，定期更新播放位置
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -177,6 +185,13 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
 
   @override
   void dispose() {
+    // 恢复竖屏模式，仅在 iOS 和 Android 中恢复
+    if (Platform.isAndroid || Platform.isIOS) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }
     // ignore: deprecated_member_use
     RawKeyboard.instance.removeListener(_handleRawKeyEvent);
     _stopPositionUpdateTimer(); // 停止定时器
