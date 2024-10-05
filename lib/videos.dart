@@ -25,7 +25,8 @@ import 'package:fnipaplay/danmaku/lib/canvas_danmaku.dart';
 // ignore: depend_on_referenced_packages
 import 'package:ionicons/ionicons.dart';
 import 'package:fnipaplay/danmaku.dart';
-
+// ignore: depend_on_referenced_packages, unused_import
+import 'package:fvp/fvp.dart';
 var videofile;
 var zentime;
 double masteropac = 1;
@@ -125,6 +126,8 @@ class MyRectanglePainter extends CustomPainter {
 }
 
 class _MyVideoPlayerState extends State<MyVideoPlayer> {
+  late VideoPlayerController _controller;
+  double _aspectRatio = 16 / 9; // 默认值
   late DanmakuController _controllerdanmaku;
   Player player = Player();
   Completer<void>? _initializeVideoPlayerCompleter;
@@ -141,7 +144,8 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
   get none => null;
   Timer? _positionUpdateTimer;
   void _startPositionUpdateTimer() {
-    _positionUpdateTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+    _positionUpdateTimer =
+        Timer.periodic(const Duration(milliseconds: 200), (timer) {
       setState(() {
         _currentPosition = player.position; // 获取播放位置
       });
@@ -463,9 +467,28 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
                                                   CircularProgressIndicator(), // 如果纹理未准备好，显示加载动画
                                             );
                                           } else {
-                                            //print("纹理 ID: $id");
-                                            return Texture(
-                                                textureId: id); // 纹理已准备好，渲染视频
+                                            return Scaffold(
+                                              backgroundColor: Colors
+                                                  .black, // 设置整个 Scaffold 的背景颜色为黑色
+                                              body: Stack(
+                                                children: [
+                                                  // 黑色背景填充整个屏幕
+                                                  Container(
+                                                    color: Colors.black,
+                                                    width: double.infinity,
+                                                    height: double.infinity,
+                                                  ),
+                                                  // 使用 Center 确保 AspectRatio 居中显示
+                                                  Center(
+                                                    child: AspectRatio(
+                                                      aspectRatio:
+                                                          _aspectRatio, // 设置视频的长宽比
+                                                      child: Texture(textureId: id), // 使用 Texture 显示视频
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
                                           }
                                         },
                                       ),
@@ -1125,11 +1148,11 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
   void _onVideoPositionChanged() {
     // 只处理 fvp.Player 的播放状态
     if (player.state == PlaybackState.playing) {
-        setState(() {
-          _isPlaying = true;
-        });
-        _startDanmakuTimer(); // 开始弹幕计时器
-    } 
+      setState(() {
+        _isPlaying = true;
+      });
+      _startDanmakuTimer(); // 开始弹幕计时器
+    }
   }
 
   void _registerPlayerListener() {
@@ -1184,6 +1207,24 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
       }
       // 使用 fvp.Player 切换音轨
       player.media = file.path;
+      _controller = VideoPlayerController.file(file)
+      ..addListener(() {
+        // 监听播放器状态变化
+        if (_controller.value.isInitialized) {
+          setState(() {
+            // 获取视频的宽和高
+            int? width = _controller.value.size.width as int?;
+            int? height = _controller.value.size.height as int?;
+            if (width != null && height != null) {
+              // 计算长宽比
+              _aspectRatio = width.toDouble() / height.toDouble();
+              if (kDebugMode) {
+                print('Aspect Ratio: $_aspectRatio');
+              }
+            }
+          });
+        }
+      });
       // 假设你想激活音轨索引为 1 的音轨
       player.setActiveTracks(MediaType.audio, [0]);
       // 设置解码器优先级
