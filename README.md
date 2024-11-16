@@ -1,4 +1,4 @@
-# 绝赞开发中
+# 随缘更新 或许
 <img width="512" alt="image" src="https://github.com/MCDFsteve/FnipaPlay/assets/71605531/45ffc07a-fc3a-4430-acf5-f542b4739c0a">
 <img width="256" alt="image" src="https://github.com/MCDFsteve/FnipaPlay/assets/71605531/39d7af56-f76b-4b5e-b14d-c3021e50262c">
 
